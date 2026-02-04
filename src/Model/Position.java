@@ -1,22 +1,31 @@
 package Model;
 
+import static Model.Constants.*;
+
 public class Position {
-    public static final int JUMP_HEIGHT = 10;
-    public static final int START_HEIGHT = 150;
-    public static final int MAX_HEIGHT = 377;
-    public static final int MIN_HEIGHT = 100;
-    private int height = START_HEIGHT;
+
+    private double height = START_HEIGHT;
+    private double currentSpeed = 0;
 
     public int getPosition(){
-        return height;
+        return (int) height;
     }
 
-    /** Jump the position up by JUMP_HEIGHT units, but not above MIN_HEIGHT */
     public void jump(){
-        if (height+JUMP_HEIGHT <= MAX_HEIGHT) height +=JUMP_HEIGHT;
+        currentSpeed = JUMP_STRENGTH;
     }
 
-    public void move(int delt){
-        height+=delt;
+    public void applyPhysics(){
+        height += currentSpeed;
+
+        currentSpeed -= GRAVITY;
+
+        if (height > MAX_HEIGHT) {
+            height = MAX_HEIGHT;
+            currentSpeed = 0;
+        } else if (height < MIN_HEIGHT) {
+            height = MIN_HEIGHT;
+            currentSpeed = 0;
+        }
     }
 }

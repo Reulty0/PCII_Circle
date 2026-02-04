@@ -2,8 +2,9 @@ package Model;
 
 import View.Display;
 
+import static Model.Constants.*;
+
 public class Refresh extends Thread {
-    public static final int DELAY = 50;
 
     private Display myDisplay;
 
@@ -17,7 +18,7 @@ public class Refresh extends Thread {
         while (true){
             myDisplay.repaint();
             try {
-                Thread.sleep(DELAY);
+                Thread.sleep(REFRESH_DELAY);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

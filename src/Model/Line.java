@@ -4,17 +4,31 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static Model.Constants.*;
 
 public class Line {
     private ArrayList<Point> points;
-    public static final int MAX_DELTA_HEIGHT = 50;
 
-    /** Constructor of Line, generates random points for the line */
     public Line(){
         points = new ArrayList<>();
-        Random y = new Random();
-        points.add(new Point(0, 150));
-        for (int x = 10; x < 610; x+=30) points.add(new Point(x, (int) (points.get(x%10).getY() + y.nextInt(MAX_DELTA_HEIGHT))));
+        Random rand = new Random();
+
+
+        int startY = DISPLAY_HEIGHT / 2;
+        points.add(new Point(0, startY));
+
+        for (int x = 10; x < DISPLAY_WIDTH + 2 * DELTA_X ; x += DELTA_X) {
+
+            if (x < DISPLAY_WIDTH / 2) {
+                points.add(new Point(x, startY));
+            } else {
+
+                int baseY = points.get(points.size() - 1).y;
+                int newY = baseY + rand.nextInt(MAX_DELTA_HEIGHT) - MAX_DELTA_HEIGHT / 2;
+                newY = Math.max(MIN_LINE_HEIGHT, Math.min(MAX_LINE_HEIGHT, newY));
+                points.add(new Point(x, newY));
+            }
+        }
     }
 
     public Point getPoint(int i) {
@@ -22,15 +36,25 @@ public class Line {
     }
 
     public void MaJ(){
+
+        for (Point p : points) {
+            p.x -= 3;
+        }
+
+        if (points.get(0).x < -DELTA_X) {
+            AddPoint();
+        }
+    }
+
+    public void AddPoint(){
         points.remove(0);
-        Random y = new Random();
+        Random rand = new Random();
         int lastX = points.get(points.size()-1).x;
         int lastY = points.get(points.size()-1).y;
-        points.add(new Point(lastX + 30, (int) (lastY + y.nextInt(MAX_DELTA_HEIGHT) - MAX_DELTA_HEIGHT/2)));
 
-        for (Point p : points){
-            p.x -= 30;
-        }
+        int newY = lastY + rand.nextInt(MAX_DELTA_HEIGHT) - MAX_DELTA_HEIGHT/2;
+        newY = Math.max(MIN_LINE_HEIGHT, Math.min(MAX_LINE_HEIGHT, newY));
+        points.add(new Point(lastX + DELTA_X, newY));
     }
 
     public int size(){

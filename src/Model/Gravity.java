@@ -1,9 +1,8 @@
 package Model;
 
-public class Gravity extends Thread {
-    public static final int DELAY = 100;
-    public static final int GRAVITY_FORCE = 1;
+import static Model.Constants.*;
 
+public class Gravity extends Thread {
     private Position myPosition;
 
     public Gravity(Position p){
@@ -14,10 +13,13 @@ public class Gravity extends Thread {
     @Override
     public void run(){
         while (true){
-            /** Move the position down by 1 unit if it is not at the maximum height */
-            if (myPosition.getPosition() - GRAVITY_FORCE >= Position.MIN_HEIGHT) myPosition.move( -GRAVITY_FORCE);
+
+            if (GAME_RUNNING) {
+                myPosition.applyPhysics();
+            }
+
             try {
-                Thread.sleep(DELAY);
+                Thread.sleep(DELAY_20);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
