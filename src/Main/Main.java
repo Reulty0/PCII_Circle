@@ -12,9 +12,10 @@ public class Main {
 
         Position p = new Position();
         Line l = new Line();
+        Score s = new Score();
 
 
-        Display d = new Display(p,l);
+        Display d = new Display(p,l,s);
 
 
         myWindow.add(d);

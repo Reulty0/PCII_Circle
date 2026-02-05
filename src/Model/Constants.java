@@ -4,6 +4,7 @@ public final class Constants {
 
     /** --- GAME --- */
     public static boolean GAME_RUNNING = false;
+    public static final int MAX_PVs = 5; // Player life points (hearts)
 
     private Constants() {}
 

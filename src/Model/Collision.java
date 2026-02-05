@@ -12,7 +12,7 @@ public class Collision extends Thread {
     public Collision(Position p, Line l){
         myPosition = p;
         myLine = l;
-        lifePoints = 3; // 3 Hearts
+        lifePoints = MAX_PVs;
         this.start();
     }
 
