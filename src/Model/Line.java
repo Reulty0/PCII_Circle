@@ -8,9 +8,11 @@ import static Model.Constants.*;
 
 public class Line {
     private ArrayList<Point> points;
+    private BonusItems myBonusItems; // Lien vers le gestionnaire de bonus
 
-    public Line(){
-        // On utilise la méthode reset pour l'initialisation aussi, ça évite de dupliquer le code
+    // Constructeur modifié pour recevoir le gestionnaire de bonus
+    public Line(BonusItems b){
+        this.myBonusItems = b;
         points = new ArrayList<>();
         reset();
     }
@@ -24,7 +26,7 @@ public class Line {
             if (x < DISPLAY_WIDTH / 2) {
                 points.add(new Point(x, startY));
             } else {
-                points.add(new Point(x, startY)); // Tout plat au début
+                points.add(new Point(x, startY));
             }
         }
     }
@@ -50,7 +52,15 @@ public class Line {
 
         int newY = lastY + rand.nextInt(MAX_DELTA_HEIGHT) - MAX_DELTA_HEIGHT/2;
         newY = Math.max(MIN_LINE_HEIGHT, Math.min(MAX_LINE_HEIGHT, newY));
+
+        // Ajout du point de ligne
         points.add(new Point(lastX + DELTA_X, newY));
+
+        // --- TENTATIVE DE SPAWN BONUS ---
+        // On demande au gestionnaire de bonus s'il veut mettre un objet ici
+        if (myBonusItems != null) {
+            myBonusItems.trySpawn(lastX + DELTA_X, newY);
+        }
     }
 
     public int size(){

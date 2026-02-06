@@ -1,13 +1,14 @@
 package Control;
 
 import Model.*;
+import View.BonusElement;
 import View.Display;
 import View.Menu;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*; // Import global pour KeyListener et MouseListener
 import static Model.Constants.*;
 
-public class ClickResponse implements MouseListener {
+// On ajoute "implements KeyListener"
+public class ClickResponse implements MouseListener, KeyListener {
 
     private Display myDisplay;
     private Position myPosition;
@@ -15,52 +16,87 @@ public class ClickResponse implements MouseListener {
     private Score myScore;
     private Collision myCollision;
     private Menu myMenu;
+    private BonusElement myBonus;
 
-    public ClickResponse(Display d, Position p, Line l, Score s, Collision c, Menu m){
+    public ClickResponse(Display d, Position p, Line l, Score s, Collision c, Menu m, BonusElement b){
         myDisplay = d;
         myPosition = p;
         myLine = l;
         myScore = s;
         myCollision = c;
         myMenu = m;
+        myBonus = b;
+
         d.addMouseListener(this);
-    }
+        d.addKeyListener(this); // AJOUT : On écoute le clavier sur le Display
 
-    @Override
-    public void mouseClicked(MouseEvent e){
-        int x = e.getX();
-        int y = e.getY();
-
-        // CAS 1 : Game Over
-        if (GAME_OVER) {
-            if (myMenu.isRestartClicked(x, y)) {
-                System.out.println("Restarting...");
-                // Reset de tout le monde
-                myPosition.reset();
-                myLine.reset();
-                myScore.reset();
-                myCollision.reset();
-
-                GAME_OVER = false;
-                GAME_RUNNING = false;
+        myMenu.getRestartButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Bouton Restart cliqué !");
+                restartGame();
+                // IMPORTANT : On redonne le focus au jeu après avoir cliqué sur le bouton
+                myDisplay.requestFocusInWindow();
             }
-            else if (myMenu.isQuitClicked(x, y)) {
+        });
+
+        myMenu.getQuitButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
-        }
-        // CAS 2 : Début du jeu
-        else if (!GAME_RUNNING) {
-            GAME_RUNNING = true;
-            myPosition.jump();
-        }
-        // CAS 3 : Jeu en cours
-        else {
-            myPosition.jump();
+        });
+    }
+
+    private void restartGame() {
+        myPosition.reset();
+        myLine.reset();
+        myScore.reset();
+        myCollision.reset();
+        myBonus.reset();
+
+        GAME_OVER = false;
+        GAME_RUNNING = false;
+        myMenu.hideButtons();
+    }
+
+    // --- GESTION DU SAUT (Logique commune) ---
+    private void performJump() {
+        if (!GAME_OVER) {
+            if (!GAME_RUNNING) {
+                GAME_RUNNING = true;
+                myPosition.jump();
+            } else {
+                myPosition.jump();
+            }
         }
     }
 
-    @Override public void mousePressed(MouseEvent e){}
+    // --- SOURIS ---
+    @Override
+    public void mouseClicked(MouseEvent e){
+        performJump();
+    }
+    // Méthode plus réactive que clicked (optionnel mais conseillé)
+    @Override
+    public void mousePressed(MouseEvent e){
+        // Si tu veux que le clic soit instantané comme le clavier, décommente la ligne ci-dessous
+        // performJump();
+    }
+
     @Override public void mouseReleased(MouseEvent e){}
     @Override public void mouseEntered(MouseEvent e){}
     @Override public void mouseExited(MouseEvent e){}
+
+    // --- CLAVIER (KeyListener) ---
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // Si on appuie sur ESPACE
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            performJump();
+        }
+    }
+
+    @Override public void keyTyped(KeyEvent e) {}
+    @Override public void keyReleased(KeyEvent e) {}
 }
