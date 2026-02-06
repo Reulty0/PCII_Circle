@@ -130,9 +130,12 @@ public class Display extends JPanel {
             if (myMenu.getRestartButton().isVisible()) myMenu.hideButtons();
             if (!GAME_RUNNING) {
                 g2.setFont(new Font("Arial", Font.BOLD, 30));
-                g2.setColor(Color.WHITE);
+                g2.setColor(new Color(255,255,255,150));
                 String msg = "Click or Space to Start!"; // Petit update texte
-                g2.drawString(msg, (DISPLAY_WIDTH - g2.getFontMetrics().stringWidth(msg)) / 2, DISPLAY_HEIGHT / 2 - 60);
+                g2.drawString(msg, (DISPLAY_WIDTH - g2.getFontMetrics().stringWidth(msg)) / 2, DISPLAY_HEIGHT / 3);
+                g2.setColor(new Color(221, 0, 255));
+                String title = "Love Rendez-Vous!"; // Petit update texte
+                g2.drawString(title, (DISPLAY_WIDTH - g2.getFontMetrics().stringWidth(title)) / 2, DISPLAY_HEIGHT / 4);
             }
         }
     }

@@ -39,9 +39,9 @@ public class Menu {
         g2.fillRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
         // Titre Game Over
-        g2.setColor(Color.RED);
+        g2.setColor(new Color(136, 0, 156));
         g2.setFont(new Font("Arial", Font.BOLD, 40));
-        String go = "GAME OVER";
+        String go = "You Dint Catch Your Rendez-Vous !";
         int goWidth = g2.getFontMetrics().stringWidth(go);
         g2.drawString(go, (DISPLAY_WIDTH - goWidth) / 2, DISPLAY_HEIGHT / 2 - 80);
 
