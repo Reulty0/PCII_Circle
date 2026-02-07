@@ -10,56 +10,54 @@ public class Menu {
     private JButton quitButton;
 
     public Menu() {
-        // --- Configuration du Bouton RESTART ---
+        /** RESTART button configuration **/
         restartButton = new JButton("RESTART");
         restartButton.setBounds(BUTTON_X, RESTART_BTN_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
         restartButton.setBackground(Color.DARK_GRAY);
         restartButton.setForeground(Color.WHITE);
         restartButton.setFont(new Font("Arial", Font.BOLD, 20));
-        restartButton.setFocusable(false); // TRÈS IMPORTANT : Empêche le bouton de voler le focus du clavier (Barre Espace)
-        restartButton.setVisible(false);   // Caché au début
+        restartButton.setFocusable(false); // Remove focus border on click
+        restartButton.setVisible(false);   // Initially hidden, will be shown when game over
 
-        // --- Configuration du Bouton QUIT ---
+        /** QUIT button configuration **/
         quitButton = new JButton("QUIT");
         quitButton.setBounds(BUTTON_X, QUIT_BTN_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
         quitButton.setBackground(Color.DARK_GRAY);
         quitButton.setForeground(Color.WHITE);
         quitButton.setFont(new Font("Arial", Font.BOLD, 20));
-        quitButton.setFocusable(false);
-        quitButton.setVisible(false);
+        quitButton.setFocusable(false); // Remove focus border on click
+        quitButton.setVisible(false); // Initially hidden, will be shown when game over
     }
 
-    /**
-     * Méthode pour dessiner uniquement le texte et le fond semi-transparent
-     * Les boutons se dessinent tout seuls car ce sont des composants Swing
-     */
+    /** Method to draw the game over background and text
+     * @param finalScore the player's final score to display on the game over screen
+     **/
     public void drawBackground(Graphics2D g2, int finalScore) {
-        // Fond semi-transparent
+        // Semi-transparent white background
         g2.setColor(new Color(255, 255, 255, 200));
         g2.fillRect(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
-        // Titre Game Over
+        // GAME OVER text
         g2.setColor(new Color(136, 0, 156));
         g2.setFont(new Font("Arial", Font.BOLD, 40));
         String go = "You Dint Catch Your Rendez-Vous !";
         int goWidth = g2.getFontMetrics().stringWidth(go);
         g2.drawString(go, (DISPLAY_WIDTH - goWidth) / 2, DISPLAY_HEIGHT / 2 - 80);
 
-        // Score Final
+        // Final Score text
         g2.setColor(Color.BLACK);
         g2.setFont(new Font("Arial", Font.PLAIN, 20));
         String fs = "Final Score : " + finalScore;
         int fsWidth = g2.getFontMetrics().stringWidth(fs);
         g2.drawString(fs, (DISPLAY_WIDTH - fsWidth) / 2, DISPLAY_HEIGHT / 2 - 40);
-
-        // Note : On ne dessine plus les boutons ici, ils sont ajoutés au panel
     }
 
-    // Getters pour récupérer les boutons et leur ajouter des actions
+    // Getters for the buttons to allow the controller to add action listeners
     public JButton getRestartButton() { return restartButton; }
     public JButton getQuitButton() { return quitButton; }
 
-    // Gestion de la visibilité des boutons
+    /*---- Methods to show/hide buttons when game over or when restarting ----*/
+
     public void showButtons() {
         restartButton.setVisible(true);
         quitButton.setVisible(true);

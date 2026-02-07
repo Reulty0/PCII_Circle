@@ -14,9 +14,9 @@ public class Refresh extends Thread {
     @Override
     public void run(){
         while (true){
-            myDisplay.repaint();
+            myDisplay.repaint(); //Refresh the display
             try {
-                Thread.sleep(REFRESH_DELAY);
+                Thread.sleep(REFRESH_DELAY); //Wait for the specified delay before refreshing again
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

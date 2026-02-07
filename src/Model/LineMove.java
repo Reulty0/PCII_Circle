@@ -15,10 +15,10 @@ public class LineMove extends Thread {
     @Override
     public void run(){
         while (true){
-
+            /** While the game is running, update the line and bonus items every 20ms */
             if (GAME_RUNNING) {
-                myLine.MaJ();
-                myBonusItems.update(); // Les bonus bougent avec la ligne
+                myLine.MaJ(); // Update the line
+                myBonusItems.update(); // Update the bonus items
             }
             try {
                 Thread.sleep(DELAY_20);

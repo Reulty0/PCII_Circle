@@ -13,7 +13,9 @@ public class Gravity extends Thread {
     @Override
     public void run(){
         while (true){
-
+            /** * If the game is running, apply physics to the position of the player.
+             * This will cause the player to fall down if they are not on the ground.
+             */
             if (GAME_RUNNING) {
                 myPosition.applyPhysics();
             }

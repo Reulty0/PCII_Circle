@@ -7,6 +7,7 @@ public class Score extends Thread {
         this.start();
     }
 
+    /** Put the score back to 0*/
     public void reset() {
         score = 0;
     }
@@ -14,12 +15,12 @@ public class Score extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (Constants.GAME_RUNNING && !Constants.GAME_OVER) {
+            if (Constants.GAME_RUNNING && !Constants.GAME_OVER) { // If the game is running and not over, increase the score
                 score++;
                 // System.out.println("Score: " + score); // Commenté pour éviter le lag
             }
             try {
-                Thread.sleep(20);
+                Thread.sleep(20); // Sleep for 20 milliseconds to control the score increment rate
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

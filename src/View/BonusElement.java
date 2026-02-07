@@ -13,17 +13,18 @@ public class BonusElement extends Thread {
     private ArrayList<Star> stars;
     private ArrayList<SpaceObject> spaceObjects;
 
+    // Visual assets for bonus elements
     private Image starImg;
     private Image cometImg;
-    private Image meteorImg;
+
 
     private Random rand = new Random();
 
     public BonusElement() {
         try {
+            // Charge all images at once, and handle exceptions if any are missing
             starImg = new ImageIcon("media/star.png").getImage();
             cometImg = new ImageIcon("media/comet.png").getImage();
-            meteorImg = new ImageIcon("media/meteor.gif").getImage();
         } catch (Exception e) {
             System.out.println("Erreur images bonus : " + e.getMessage());
         }
@@ -35,13 +36,15 @@ public class BonusElement extends Thread {
         this.start();
     }
 
+    /** Initialisation of stars with random positions and speeds */
     private void initStars() {
         stars.clear();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 50; i++) { // Number of stars
             stars.add(new Star(rand.nextInt(DISPLAY_WIDTH), rand.nextInt(DISPLAY_HEIGHT)));
         }
     }
 
+    // Method to reset all bonus elements
     public void reset() {
         spaceObjects.clear();
     }
@@ -49,7 +52,7 @@ public class BonusElement extends Thread {
     @Override
     public void run() {
         while (true) {
-            if (GAME_RUNNING && !GAME_OVER) {
+            if (GAME_RUNNING && !GAME_OVER) { // Only update if the game is active
                 updateStars();
                 updateSpaceObjects();
                 spawnManager();
@@ -60,6 +63,7 @@ public class BonusElement extends Thread {
         }
     }
 
+    /** Update the position of stars, and reset them to the right edge if they go off-screen */
     private void updateStars() {
         for (Star s : stars) {
             s.x -= s.speed;
@@ -70,67 +74,61 @@ public class BonusElement extends Thread {
         }
     }
 
+    /** Update the position of space objects, and remove them if they go too far off-screen */
     private void updateSpaceObjects() {
-        Iterator<SpaceObject> iter = spaceObjects.iterator();
-        while (iter.hasNext()) {
+        Iterator<SpaceObject> iter = spaceObjects.iterator(); // Use iterator to safely remove objects while iterating
+        while (iter.hasNext()) { // Loop through space objects
             SpaceObject obj = iter.next();
             obj.x += obj.dx;
             obj.y += obj.dy;
 
+            // Remove objects that are far off-screen to free up memory
             if (obj.x < -200 || obj.y > DISPLAY_HEIGHT + 200 || obj.y < -200) {
                 iter.remove();
             }
         }
     }
 
+    /** Spawn new space objects based on defined probabilities */
     private void spawnManager() {
-        int r = rand.nextInt(100);
+        int r = rand.nextInt(COMET_RATIO); // Generate a random number to decide what to spawn
 
         if (r < PROB_COMET) {
-            int startY = rand.nextInt(DISPLAY_HEIGHT / 2);
-            spaceObjects.add(new SpaceObject(DISPLAY_WIDTH, startY, COMET_SPEED_X, COMET_SPEED_Y, cometImg, 80, 40, true));
-        }
-        else if (r < PROB_METEOR) {
-            int startY = rand.nextInt(DISPLAY_HEIGHT);
-            int dy = rand.nextInt(6) - 3;
-            spaceObjects.add(new SpaceObject(DISPLAY_WIDTH, startY, METEOR_SPEED_X, dy, meteorImg, 50, 50, false));
+            int startY = rand.nextInt(DISPLAY_HEIGHT / 2); // Start in the upper half of the screen for better visibility
+            spaceObjects.add(new SpaceObject(DISPLAY_WIDTH, startY, COMET_SPEED_X, COMET_SPEED_Y, cometImg, 80, 40)); // Spawn a comet with fixed speed and size
         }
     }
 
+    /** Draw all bonus elements (stars and space objects) on the screen
+     * 1. Stars
+     * 2. Comets
+     **/
     public void draw(Graphics2D g2) {
-        // 1. Etoiles
+        // 1. Stars
         for (Star s : stars) {
             if (starImg != null)
                 g2.drawImage(starImg, s.x, s.y, STAR_SIZE, STAR_SIZE, null);
-            else {
+            else { // Fallback: draw a simple white dot if the star image is missing
                 g2.setColor(Color.WHITE); g2.fillOval(s.x, s.y, 3, 3);
             }
         }
 
-        // 2. Objets spatiaux (AVEC CORRECTION ROTATION)
+        // 2. Space Objects (Comets)
         AffineTransform oldTransform = g2.getTransform();
 
         for (SpaceObject obj : spaceObjects) {
             if (obj.img != null) {
                 double centerX = obj.x + obj.width / 2.0;
                 double centerY = obj.y + obj.height / 2.0;
-                double angle = Math.atan2(obj.dy, obj.dx);
 
-                // --- CORRECTION DES ANGLES ---
-                if (obj.isComet) {
-                    // La comète allait en marche arrière -> On ajoute 180° (PI)
-                    angle += Math.PI;
-                } else {
-                    // Le météore pointe vers le bas -> On retire 90° (PI/2)
-                    angle -= Math.PI / 2.0;
-                }
-                // -----------------------------
+                double angle = Math.atan2(obj.dy, obj.dx); // Calculate the angle of movement based on velocity
+                angle += Math.PI; // Rotate 180 degrees to point the front of the comet in the direction of movement
 
                 g2.rotate(angle, centerX, centerY);
                 g2.drawImage(obj.img, (int)obj.x, (int)obj.y, obj.width, obj.height, null);
                 g2.setTransform(oldTransform);
 
-            } else {
+            } else { // Fallback: draw a simple red oval if the comet image is missing
                 g2.setColor(Color.RED);
                 g2.fillOval((int)obj.x, (int)obj.y, obj.width, obj.height);
             }
@@ -151,9 +149,9 @@ public class BonusElement extends Thread {
         double x, y, dx, dy;
         Image img;
         int width, height;
-        boolean isComet;
+        // Suppression du boolean isComet
 
-        public SpaceObject(double x, double y, double dx, double dy, Image img, int w, int h, boolean isComet) {
+        public SpaceObject(double x, double y, double dx, double dy, Image img, int w, int h) {
             this.x = x;
             this.y = y;
             this.dx = dx;
@@ -161,7 +159,6 @@ public class BonusElement extends Thread {
             this.img = img;
             this.width = w;
             this.height = h;
-            this.isComet = isComet;
         }
     }
 }
